@@ -1,0 +1,144 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
+  color: #eef;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;   /* keep the sliding card from making scrollbars */
+}
+
+/* screen-to-screen slide: current goes up and off, next comes up from below */
+@keyframes slideOutUp {
+  from { transform: translateY(0);      opacity: 1; }
+  to   { transform: translateY(-130%);  opacity: 0; }
+}
+@keyframes slideInUp {
+  from { transform: translateY(130%);   opacity: 0; }
+  to   { transform: translateY(0);      opacity: 1; }
+}
+.card.slide-out-up { animation: slideOutUp 0.35s ease-in forwards; }
+.card.slide-in-up  { animation: slideInUp 0.5s cubic-bezier(.16,1,.3,1); }
+
+.card {
+  width: 100%;
+  max-width: 560px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  max-height: calc(100vh - 40px);   /* fit the viewport (body has 20px padding top/bottom) */
+  overflow-y: auto;                 /* long results scroll inside the card */
+}
+
+h1 { margin: 0 0 4px; font-size: 30px; letter-spacing: -0.5px; }
+.tagline { color: #8ea; margin: 0 0 24px; font-size: 14px; }
+
+.meta { display: flex; justify-content: space-between; font-size: 14px; color: #9ab; margin-bottom: 8px; }
+
+.timer-track { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
+.timer-fill { height: 100%; width: 100%; background: linear-gradient(90deg,#4ade80,#22d3ee); transition: width 1s linear; }
+.timer-fill.warn { background: linear-gradient(90deg,#fbbf24,#f97316); }
+.timer-fill.danger { background: linear-gradient(90deg,#f87171,#ef4444); }
+
+.question { font-size: 24px; font-weight: 600; margin: 0 0 20px; line-height: 1.3; }
+.questionSubtext { font-size: 16px; font-weight: 400; margin: 0 0 20px; line-height: 1.3; color: #89a; }
+
+
+.input-row { display: flex; gap: 10px; }
+input[type=text] {
+  flex: 1; padding: 14px 16px; font-size: 17px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.25); color: #fff; outline: none;
+}
+input[type=text]:focus { border-color: #22d3ee; }
+
+button {
+  padding: 14px 22px; font-size: 16px; font-weight: 600; border: none; border-radius: 10px;
+  background: #22d3ee; color: #062; cursor: pointer; transition: transform .05s, background .2s;
+}
+button:hover { background: #67e8f9; }
+button:active { transform: scale(0.97); }
+button.secondary { background: transparent; color: #9cc; border: 1px solid rgba(255,255,255,0.2); margin-left: 10px; }
+button.secondary:hover { background: rgba(255,255,255,0.06); color: #cff; }
+
+.share-status { min-height: 20px; margin-top: 14px; font-size: 14px; font-weight: 600; }
+.share-status.good { color: #4ade80; }
+.share-status.bad { color: #fbbf24; }
+
+.feedback { min-height: 26px; margin-top: 16px; font-size: 16px; font-weight: 600; }
+.feedback.good { color: #4ade80; }
+.feedback.bad { color: #f87171; }
+
+/* points meter (shown when an answer lands) */
+.meter-wrap { margin-top: 8px; text-align: center; }
+.meter {
+  position: relative; height: 46px; border-radius: 12px; overflow: hidden;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+}
+.meter-fill {
+  position: relative; height: 100%; width: 0; overflow: hidden;
+  transition: width 1.6s cubic-bezier(.16,1,.3,1);
+}
+/* glossy highlight over the filled portion */
+.meter-fill::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0) 45%, rgba(0,0,0,.14));
+}
+.meter-caption { margin-top: 10px; font-size: 17px; font-weight: 700; color: #eef; min-height: 22px; }
+.next-btn { display: inline-block; margin-top: 32px; font-size: 20px; padding: 16px 40px; }
+.meter-caption.reveal { animation: pop 0.4s cubic-bezier(.2,1.4,.4,1); }
+@keyframes pop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  60%  { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+.score-big { font-size: 60px; font-weight: 800; margin: 8px 0; background: linear-gradient(90deg,#4ade80,#22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+.breakdown { list-style: none; padding: 0; margin: 16px 0; }
+.breakdown li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 15px; }
+.breakdown .pts { font-weight: 700; color: #4ade80; }
+
+.hint { font-size: 13px; color: #789; margin-top: 20px; line-height: 1.5; }
+.def { font-size: 13px; color: rgb(199, 207, 215); margin-top: 30px; line-height: 1.5; }
+.center { text-align: center; }
+
+/* results dropdowns */
+.results-list { margin: 16px 0; }
+.result { border-bottom: 1px solid rgba(255,255,255,0.08); }
+.result > summary {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 4px; cursor: pointer; font-size: 15px; list-style: none; gap: 12px;
+}
+.result > summary::-webkit-details-marker { display: none; }
+.result > summary::before {
+  content: "▸"; color: #789; margin-right: 8px; transition: transform .15s; display: inline-block;
+}
+.result[open] > summary::before { transform: rotate(90deg); }
+.result > summary .q-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.result > summary .q-prompt { font-weight: 500; font-size: 13px; }
+.result > summary .your-answer { font-size: 16px; font-weight: 600; color: #8ea; }
+.result > summary .your-answer.none { color: #f87171; font-style: italic; }
+.all-answers { list-style: none; padding: 0 4px 12px 24px; margin: 0; }
+.all-answers .ans-row {
+  padding: 6px 0; font-size: 14px; color: #cdd;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.all-answers .ans-row:last-child { border-bottom: none; }
+.all-answers .ans-line { display: flex; justify-content: space-between; }
+.all-answers .ans-desc { font-size: 12px; color: #89a; margin-top: 3px; line-height: 1.4; }
+
+/* Leaderboard */
+
+.name-list { width: 494px; margin: 0 auto; }
+.name-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; }
+.name { text-align: left;font-size: 16px; color: #89a; }
+.number { text-align: right; font-size: 16px; color: #89a; }
+.firstname { padding-top: 15px;}
+.summary { font-style: italic; color: rgb(238, 238, 255);}
