@@ -82,19 +82,19 @@ function buildShareText(){
 // Copy text to the clipboard, with a fallback for insecure (file://) pages.
 async function copyText(text){
     try {
-    await navigator.clipboard.writeText(text);
-    return true;
+        await navigator.clipboard.writeText(text);
+        return true;
     } catch(e){
-    const ta = document.createElement("textarea");
-    ta.value = text;
-    ta.style.position = "fixed";
-    ta.style.opacity = "0";
-    document.body.appendChild(ta);
-    ta.focus(); ta.select();
-    let ok = false;
-    try { ok = document.execCommand("copy"); } catch(_){ ok = false; }
-    document.body.removeChild(ta);
-    return ok;
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        let ok = false;
+        try { ok = document.execCommand("copy"); } catch(_){ ok = false; }
+        document.body.removeChild(ta);
+        return ok;
     }
 }
 
@@ -102,20 +102,20 @@ async function copyText(text){
 // along gray → blue → red → purple → gold.
 function colorForPoints(v){
     const stops = [
-    [10,  [154,164,178]],  // gray   — common
-    [30,  [59,130,246]],   // blue   — uncommon
-    [60,  [239,68,68]],    // red    — rare
-    [85,  [168,85,247]],   // purple — ultra rare
-    [100, [245,197,24]],   // gold   — legendary
+        [10,  [154,164,178]],  // gray   — common
+        [30,  [59,130,246]],   // blue   — uncommon
+        [60,  [239,68,68]],    // red    — rare
+        [85,  [168,85,247]],   // purple — ultra rare
+        [100, [245,197,24]],   // gold   — legendary
     ];
     const rgb = a => `rgb(${a[0]},${a[1]},${a[2]})`;
     if(v <= stops[0][0]) return rgb(stops[0][1]);
     for(let i = 1; i < stops.length; i++){
-    const [p0, c0] = stops[i-1], [p1, c1] = stops[i];
-    if(v <= p1){
-        const t = (v - p0) / (p1 - p0);
-        return rgb([0,1,2].map(k => Math.round(c0[k] + (c1[k] - c0[k]) * t)));
-    }
+        const [p0, c0] = stops[i-1], [p1, c1] = stops[i];
+        if(v <= p1){
+            const t = (v - p0) / (p1 - p0);
+            return rgb([0,1,2].map(k => Math.round(c0[k] + (c1[k] - c0[k]) * t)));
+        }
     }
     return rgb(stops[stops.length - 1][1]);
 }
@@ -150,12 +150,12 @@ function showMeter(pts, onDone){
         fill.style.background = colorForPoints(value);
         caption.textContent = "+" + Math.round(value);     // just the number while filling
         if(t < 1){
-        requestAnimationFrame(tick);
+            requestAnimationFrame(tick);
         } else {
-        // Bar is full — now reveal the tier ("Rare!", "Legendary!", …).
-        caption.textContent = tierLabel(pts) + "  +" + pts;
-        caption.classList.add("reveal");
-        if(onDone) onDone();
+            // Bar is full — now reveal the tier ("Rare!", "Legendary!", …).
+            caption.textContent = tierLabel(pts) + "  +" + pts;
+            caption.classList.add("reveal");
+            if(onDone) onDone();
         }
     })(performance.now());
     }, PRE_DELAY);
@@ -206,48 +206,44 @@ function renderStart(){
                 <summary class="summary"> Last week's scores </summary>
                 <div class="name-list">
                     <div class="name-row firstname">
-                        <span class="name">Harman 🥇</span>
-                        <span class="number">400</span>
+                        <span class="name">Varan/Jenny 🥇</span>
+                        <span class="number">560</span>
                     </div>
                     <div class="name-row">
-                        <span class="name">Iris 🥈</span>
-                        <span class="number">395</span>
+                        <span class="name">Arthur 🥈</span>
+                        <span class="number">435</span>
                     </div>
                     <div class="name-row">
-                        <span class="name">Varan 🥉</span>
-                        <span class="number">365</span>
+                        <span class="name">Oana 🥉</span>
+                        <span class="number">385</span>
                     </div>
                     <div class="name-row">
-                        <span class="name">Alex</span>
-                        <span class="number">340</span>
+                        <span class="name">Iris</span>
+                        <span class="number">375</span>
                     </div>
                     <div class="name-row">
-                        <span class="name">Andrew</span>
-                        <span class="number">300</span>
+                        <span class="name">Harman</span>
+                        <span class="number">370</span>
                     </div>
                     <div class="name-row">
-                        <span class="name">Brian</span>
-                        <span class="number">290</span>
-                    </div>
-                    <div class="name-row">
-                        <span class="name">Amy</span>
-                        <span class="number">285</span>
-                    </div>
-                    <div class="name-row">
-                        <span class="name">Arthur</span>
-                        <span class="number">260</span>
+                        <span class="name">Dustin</span>
+                        <span class="number">335</span>
                     </div>
                     <div class="name-row">
                         <span class="name">Julia</span>
-                        <span class="number">255</span>
+                        <span class="number">320</span>
                     </div>
                     <div class="name-row">
-                        <span class="name">Jenny</span>
-                        <span class="number">230</span>
+                        <span class="name">Brian</span>
+                        <span class="number">300</span>
                     </div>
                     <div class="name-row">
-                        <span class="name">Oana</span>
-                        <span class="number">225</span>
+                        <span class="name">Amy</span>
+                        <span class="number">260</span>
+                    </div>
+                    <div class="name-row">
+                        <span class="name">Andrew</span>
+                        <span class="number">205</span>
                     </div>
                 </div>
             </details></div>
