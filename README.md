@@ -17,4 +17,4 @@ python3 -m http.server 8000
 cloudflared tunnel --url http://localhost:8000
 ```
 
-From there, cloudflare will generate a temporary link for you. It only works if your laptop is running!
+From there, cloudflare will generate a temporary link for you. It only works if your laptop is awake!
