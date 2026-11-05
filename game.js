@@ -203,7 +203,7 @@ function renderStart(){
         <li><span>Time per question</span><span class="pts">${CONFIG.secondsPerQuestion}s</span></li>
         <li><span>
             <div class="leaderboard"> <details> 
-                <summary class="summary"> Last week's scores </summary>
+                <summary class="summary"> Last Crillion's scores </summary>
                 <div class="name-list">
                     <div class="name-row firstname">
                         <span class="name">Varan/Jenny 🥇</span>
