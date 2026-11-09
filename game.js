@@ -70,12 +70,26 @@ function emojiForPoints(pts){
     return "⬛";                  // no points / timed out
 }
 
+function wackyEmojiForPoints(pts){
+    if(pts >= 100) {
+        // IF YOU'RE CMD+F SEARCHING THROUGH TO CODE TO FIND
+        // OUT WHAT THE EMOJIS MEAN, MIND YOUR BUSINESS!
+        const wackyEmojis = ["🧅", "⭐", "⭐", "🎯", "🎯", "🗿"];
+        return wackyEmojis[Math.floor(Math.random() * wackyEmojis.length)];
+    }
+    return "⬛";
+}
+
 // Build the text that gets copied to the clipboard.
 function buildShareText(){
     const total = scores.reduce((a,b) => a + (b||0), 0);
-    const max = QUESTIONS_WEEK_3.length * 100;
+    const max = QUESTIONS_WEEK_5.length * 100;
     // TODO: Update
-    const emojis = QUESTIONS_WEEK_3.map((_, i) => emojiForPoints(scores[i] || 0)).join("");
+    const emojis = QUESTIONS_WEEK_5.map((_, i) => {
+        return i !== 6 
+            ? emojiForPoints(scores[i] || 0)
+            : wackyEmojiForPoints(scores[i] || 0);
+    }).join("");
     return `${CONFIG.gameTitle}\n${total} / ${max}\n${emojis}`;
 }
 
@@ -199,51 +213,51 @@ function renderStart(){
         <h1>${CONFIG.gameTitle}</h1>
         <p class="tagline">${CONFIG.tagline}</p>
         <ul class="breakdown" style="text-align:left">
-        <li><span>Questions</span><span class="pts">${QUESTIONS_WEEK_3.length}</span></li>
+        <li><span>Questions</span><span class="pts">${QUESTIONS_WEEK_5.length}</span></li>
         <li><span>Time per question</span><span class="pts">${CONFIG.secondsPerQuestion}s</span></li>
         <li><span>
             <div class="leaderboard"> <details> 
                 <summary class="summary"> Last Crillion's scores </summary>
                 <div class="name-list">
                     <div class="name-row firstname">
-                        <span class="name">Varan/Jenny 🥇</span>
-                        <span class="number">560</span>
+                        <span class="name">Varan 🥇</span>
+                        <span class="number">570</span>
                     </div>
                     <div class="name-row">
-                        <span class="name">Arthur 🥈</span>
-                        <span class="number">435</span>
+                        <span class="name">Iris 🥈</span>
+                        <span class="number">490</span>
                     </div>
                     <div class="name-row">
-                        <span class="name">Oana 🥉</span>
-                        <span class="number">385</span>
-                    </div>
-                    <div class="name-row">
-                        <span class="name">Iris</span>
-                        <span class="number">375</span>
-                    </div>
-                    <div class="name-row">
-                        <span class="name">Harman</span>
-                        <span class="number">370</span>
-                    </div>
-                    <div class="name-row">
-                        <span class="name">Dustin</span>
-                        <span class="number">335</span>
-                    </div>
-                    <div class="name-row">
-                        <span class="name">Julia</span>
-                        <span class="number">320</span>
-                    </div>
-                    <div class="name-row">
-                        <span class="name">Brian</span>
-                        <span class="number">300</span>
-                    </div>
-                    <div class="name-row">
-                        <span class="name">Amy</span>
-                        <span class="number">260</span>
+                        <span class="name">Alex 🥉</span>
+                        <span class="number">470</span>
                     </div>
                     <div class="name-row">
                         <span class="name">Andrew</span>
-                        <span class="number">205</span>
+                        <span class="number">390</span>
+                    </div>
+                    <div class="name-row">
+                        <span class="name">Jenny/Arthur</span>
+                        <span class="number">380</span>
+                    </div>
+                    <div class="name-row">
+                        <span class="name">Oana</span>
+                        <span class="number">370</span>
+                    </div>
+                    <div class="name-row">
+                        <span class="name">Amy</span>
+                        <span class="number">365</span>
+                    </div>
+                    <div class="name-row">
+                        <span class="name">Brian</span>
+                        <span class="number">340</span>
+                    </div>
+                    <div class="name-row">
+                        <span class="name">Dustin</span>
+                        <span class="number">310</span>
+                    </div>
+                    <div class="name-row">
+                        <span class="name">Harman/Julia</span>
+                        <span class="number">DNF</span>
                     </div>
                 </div>
             </details></div>
@@ -261,12 +275,12 @@ function renderStart(){
 }
 
 function renderQuestion(){
-    const q = QUESTIONS_WEEK_3[qIndex];
+    const q = QUESTIONS_WEEK_5[qIndex];
     card.innerHTML = `
     <h1>${CONFIG.gameTitle}</h1>
     <p class="tagline">${CONFIG.tagline}</p>
     <div class="meta">
-        <span>Question ${qIndex+1} of ${QUESTIONS_WEEK_3.length}</span>
+        <span>Question ${qIndex+1} of ${QUESTIONS_WEEK_5.length}</span>
         <span id="secs">${CONFIG.secondsPerQuestion}s</span>
     </div>
     <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
@@ -293,10 +307,10 @@ function submitGuess(){
     const input = document.getElementById("guess");
     const guess = input.value;
     if (!guess.trim()) return;
-    const q = QUESTIONS_WEEK_3[qIndex];
+    const q = QUESTIONS_WEEK_5[qIndex];
     const { points, answerGuessed, hint } = lookup(q, guess);
     if (points === null){
-        flash("bad", `"${guess.trim()}" ${!!hint ? hint : "Nothing turned up"}`);
+        flash("bad", !!hint ? hint : `"${guess.trim()}" Nothing turned up`);
         input.value = "";
         input.focus();
         return;
@@ -313,7 +327,7 @@ function submitGuess(){
 function showNextButton(){
     const btn = document.getElementById("nextBtn");
     if(!btn) return;
-    btn.textContent = (qIndex >= QUESTIONS_WEEK_3.length - 1) ? "See results →" : "Next question →";
+    btn.textContent = (qIndex >= QUESTIONS_WEEK_5.length - 1) ? "See results →" : "Next question →";
     btn.style.display = "inline-block";
     btn.onclick = nextQuestion;
     btn.focus();
@@ -330,7 +344,7 @@ function endTheGame() {
 
 function nextQuestion(){
     qIndex++;
-    const render = qIndex >= QUESTIONS_WEEK_3.length ? endTheGame : renderQuestion;
+    const render = qIndex >= QUESTIONS_WEEK_5.length ? endTheGame : renderQuestion;
     slideToNext(render);
 }
 
@@ -348,8 +362,8 @@ function slideToNext(render){
 
 function renderResults(guessesList, scoresList){
     const total = scoresList.reduce((a,b)=>a+(b||0),0);
-    const max = QUESTIONS_WEEK_3.length * 100;
-    const rows = QUESTIONS_WEEK_3.map((q,i) => {
+    const max = QUESTIONS_WEEK_5.length * 100;
+    const rows = QUESTIONS_WEEK_5.map((q,i) => {
         const earned = scoresList[i] || 0;
         const yours = guessesList[i]
             ? `<span class="your-answer">${guessesList[i]}</span>`
@@ -364,7 +378,7 @@ function renderResults(guessesList, scoresList){
             </li>`
             ).join("");
 
-        const overrideAnswer = `
+        const overrideAnswer  = `
             <ul class="all-answers">
                 <li class="ans-row">
                     <div class="ans-line">
@@ -374,6 +388,29 @@ function renderResults(guessesList, scoresList){
                 </li>
             </ul>
         `
+
+        // If show answers if false, just render the answer they replied with
+        if(!q.showAnswers) {
+            return `
+            <details class="result">
+            <summary>
+                <span class="q-info">
+                <span class="q-prompt">${q.prompt}</span>
+                ${yours}
+                </span>
+                <span class="pts">${earned}</span>
+            </summary>
+            <ul class="all-answers">
+                <li class="ans-row">
+                    <div class="ans-line">
+                        <span>${yours}</span>
+                        <span class="pts">${earned}</span>
+                    </div>
+                </li>
+            </ul>
+            </details>
+        `;
+        }
 
         return `
             <details class="result">
@@ -422,6 +459,7 @@ if (saved) {
     const gameState = JSON.parse(saved);
 
     if (gameState.completed) {
+        scores = gameState.scores;
         renderResults(gameState.guesses, gameState.scores);
     }
 } else {
