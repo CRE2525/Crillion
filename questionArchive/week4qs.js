@@ -1,14 +1,11 @@
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
-}
-
-const CONFIG = {
+const CONFIG_WEEK_4 = {
     gameTitle: "Crillion",
-    tagline: "It's back.",
+    tagline: "Number 4",
     secondsPerQuestion: 45,
+    archived: true,
 }
 
-const QUESTIONS_WEEK_3 = [
+const QUESTIONS_WEEK_4 = [
     {
         // Boston culture
         prompt: "Name a movie set in Boston",
