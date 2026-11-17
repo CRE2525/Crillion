@@ -1,3 +1,10 @@
+const CONFIG_WEEK_3 = {
+    gameTitle: "Crillion",
+    tagline: "Number 3",
+    secondsPerQuestion: 45,
+    archived: true,
+}
+
 const QUESTIONS_WEEK_3 = [
     {
         // Local Geography 3.5/5

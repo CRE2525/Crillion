@@ -3,7 +3,9 @@ let qIndex = 0;
 let scores = [];              // points earned per question
 let guesses = [];             // the answer the player landed on (undefined if timed out)
 let timer = null;
-let timeLeft = CONFIG.secondsPerQuestion;
+let timeLeft = 45;
+let QUESTION_SET = []
+let CONFIG = {}
 
 /* ---------- answer matching ---------- */
 function normalize(s){
@@ -74,7 +76,7 @@ function wackyEmojiForPoints(pts){
     if(pts >= 100) {
         // IF YOU'RE CMD+F SEARCHING THROUGH TO CODE TO FIND
         // OUT WHAT THE EMOJIS MEAN, MIND YOUR BUSINESS!
-        const wackyEmojis = ["🧅", "⭐", "⭐", "🎯", "🎯", "🗿"];
+        const wackyEmojis = ["🧅", "⭐", "⭐", "🔥", "🔥", "🗿"];
         return wackyEmojis[Math.floor(Math.random() * wackyEmojis.length)];
     }
     return "⬛";
@@ -83,14 +85,23 @@ function wackyEmojiForPoints(pts){
 // Build the text that gets copied to the clipboard.
 function buildShareText(){
     const total = scores.reduce((a,b) => a + (b||0), 0);
-    const max = QUESTIONS_WEEK_5.length * 100;
-    // TODO: Update
-    const emojis = QUESTIONS_WEEK_5.map((_, i) => {
-        return i !== 6 
-            ? emojiForPoints(scores[i] || 0)
-            : wackyEmojiForPoints(scores[i] || 0);
-    }).join("");
-    return `${CONFIG.gameTitle}\n${total} / ${max}\n${emojis}`;
+    const max = QUESTION_SET.length * 100;
+    // TODO: This is hacky but whatever
+    let emojis = ""
+    if(CONFIG.archived) {
+        console.log("archived")
+        emojis = QUESTION_SET.map((_, i) => emojiForPoints(scores[i] || 0)).join("");
+    } else {
+        console.log(" not archived")
+        // This week uses wacky emojis
+        emojis = QUESTION_SET.map((_, i) => {
+            return i !== 6 
+                ? emojiForPoints(scores[i] || 0)
+                : wackyEmojiForPoints(scores[i] || 0);
+        }).join("");
+    }
+    console.log(emojis)
+    return `${CONFIG.gameTitle}: ${CONFIG.tagline}\n${total} / ${max}\n${emojis}`;
 }
 
 // Copy text to the clipboard, with a fallback for insecure (file://) pages.
@@ -208,12 +219,14 @@ function flash(kind, msg){
 
 /* ---------- screens ---------- */
 function renderStart(){
+    CONFIG = CONFIG_WEEK_5;
+    QUESTION_SET = QUESTIONS_WEEK_5;
     card.innerHTML = `
     <div class="center">
         <h1>${CONFIG.gameTitle}</h1>
         <p class="tagline">${CONFIG.tagline}</p>
         <ul class="breakdown" style="text-align:left">
-        <li><span>Questions</span><span class="pts">${QUESTIONS_WEEK_5.length}</span></li>
+        <li><span>Questions</span><span class="pts">${QUESTION_SET.length}</span></li>
         <li><span>Time per question</span><span class="pts">${CONFIG.secondsPerQuestion}s</span></li>
         <li><span>
             <div class="leaderboard"> <details> 
@@ -274,13 +287,60 @@ function renderStart(){
     };
 }
 
+function renderArchive(){
+    card.innerHTML = `
+    <div class="center">
+        <h1>Archive</h1>
+        <br>
+        <div>
+            <button id="week-1" class="disabled-btn">
+                Week 1 (TBA)
+            </button>
+        </div>
+        <br>
+        <div>
+            <button id="week-2">Week 2</button>
+        </div>
+        <br>
+        <div>
+            <button id="week-3">Week 3</button>
+        </div>
+        <br>
+        <div>
+            <button id="week-4">Week 4</button>
+        </div>
+    </div>
+    `;
+
+    // Week 2
+    document.getElementById("week-2").onclick = () => {
+        qIndex = 0; scores = []; guesses = []; 
+        QUESTION_SET = QUESTIONS_WEEK_2; CONFIG = CONFIG_WEEK_2;
+        slideToNext(renderQuestion);
+    };
+
+    // Week 3
+    document.getElementById("week-3").onclick = () => {
+        qIndex = 0; scores = []; guesses = [];
+        QUESTION_SET = QUESTIONS_WEEK_3; CONFIG = CONFIG_WEEK_3
+        slideToNext(renderQuestion);
+    };
+
+    // Week 4
+    document.getElementById("week-4").onclick = () => {
+        qIndex = 0; scores = []; guesses = [];
+        QUESTION_SET = QUESTIONS_WEEK_4; CONFIG = CONFIG_WEEK_4
+        slideToNext(renderQuestion);
+    };
+}
+
 function renderQuestion(){
-    const q = QUESTIONS_WEEK_5[qIndex];
+    const q = QUESTION_SET[qIndex];
     card.innerHTML = `
     <h1>${CONFIG.gameTitle}</h1>
     <p class="tagline">${CONFIG.tagline}</p>
     <div class="meta">
-        <span>Question ${qIndex+1} of ${QUESTIONS_WEEK_5.length}</span>
+        <span>Question ${qIndex+1} of ${QUESTION_SET.length}</span>
         <span id="secs">${CONFIG.secondsPerQuestion}s</span>
     </div>
     <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
@@ -307,7 +367,7 @@ function submitGuess(){
     const input = document.getElementById("guess");
     const guess = input.value;
     if (!guess.trim()) return;
-    const q = QUESTIONS_WEEK_5[qIndex];
+    const q = QUESTION_SET[qIndex];
     const { points, answerGuessed, hint } = lookup(q, guess);
     if (points === null){
         flash("bad", !!hint ? hint : `"${guess.trim()}" Nothing turned up`);
@@ -327,7 +387,7 @@ function submitGuess(){
 function showNextButton(){
     const btn = document.getElementById("nextBtn");
     if(!btn) return;
-    btn.textContent = (qIndex >= QUESTIONS_WEEK_5.length - 1) ? "See results →" : "Next question →";
+    btn.textContent = (qIndex >= QUESTION_SET.length - 1) ? "See results →" : "Next question →";
     btn.style.display = "inline-block";
     btn.onclick = nextQuestion;
     btn.focus();
@@ -344,7 +404,7 @@ function endTheGame() {
 
 function nextQuestion(){
     qIndex++;
-    const render = qIndex >= QUESTIONS_WEEK_5.length ? endTheGame : renderQuestion;
+    const render = qIndex >= QUESTION_SET.length ? endTheGame : renderQuestion;
     slideToNext(render);
 }
 
@@ -362,8 +422,9 @@ function slideToNext(render){
 
 function renderResults(guessesList, scoresList){
     const total = scoresList.reduce((a,b)=>a+(b||0),0);
-    const max = QUESTIONS_WEEK_5.length * 100;
-    const rows = QUESTIONS_WEEK_5.map((q,i) => {
+    const max = QUESTION_SET.length * 100;
+    console.log(QUESTION_SET)
+    const rows = QUESTION_SET.map((q,i) => {
         const earned = scoresList[i] || 0;
         const yours = guessesList[i]
             ? `<span class="your-answer">${guessesList[i]}</span>`
@@ -435,8 +496,12 @@ function renderResults(guessesList, scoresList){
     <div class="results-list">${rows}</div>
     <div class="center">
         <button id="share">Share your score</button>
-        <button id="again" class="secondary">Play again (resets cache)</button>
+        <button id="again" class="secondary">Reset game</button>
         <div class="share-status" id="shareStatus"></div>
+    </div>
+    <br>
+    <div class="center">
+        Miss a week? <a href="#0" id="archive" class="small-btn">Play the archive!</a> <b>Probably will be buggy</b>. It also costs $12.
     </div>
     `;
     document.getElementById("again").onclick = () => {
@@ -444,11 +509,15 @@ function renderResults(guessesList, scoresList){
         renderStart();
     };
     document.getElementById("share").onclick = async () => {
-    const status = document.getElementById("shareStatus");
-    const ok = await copyText(buildShareText());
-    status.textContent = ok ? "Copied to clipboard — paste it anywhere!"
-                            : "Couldn't copy automatically — select and copy the text above.";
-    status.className = "share-status " + (ok ? "good" : "bad");
+        const status = document.getElementById("shareStatus");
+        const ok = await copyText(buildShareText());
+        status.textContent = ok ? "Copied to clipboard — paste it anywhere!"
+                                : "Couldn't copy automatically — select and copy the text above.";
+        status.className = "share-status " + (ok ? "good" : "bad");
+    };
+    document.getElementById("archive").onclick = () => {
+        //localStorage.clear();
+        renderArchive();
     };
 }
 
@@ -459,6 +528,8 @@ if (saved) {
     const gameState = JSON.parse(saved);
 
     if (gameState.completed) {
+        QUESTION_SET = QUESTIONS_WEEK_5;
+        CONFIG = CONFIG_WEEK_5;
         scores = gameState.scores;
         renderResults(gameState.guesses, gameState.scores);
     }

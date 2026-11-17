@@ -2,10 +2,11 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
-const CONFIG = {
+const CONFIG_WEEK_5 = {
     gameTitle: "Crillion",
     tagline: "Fifth edition",
     secondsPerQuestion: 45,
+    archived: false,
 }
 
 const QUESTIONS_WEEK_5 = [
@@ -383,7 +384,7 @@ const QUESTIONS_WEEK_5 = [
                 answer: "Humpback whale",
                 points: 100,
                 accept: ["Humpback", "Humpback whale"],
-                description: "If you've went whale watching, you've likely seen a Humpback!",
+                description: "If you've went whale watching, you've likely seen a Humpback.",
             },
             // ungulates
             {
@@ -1200,7 +1201,7 @@ const QUESTIONS_WEEK_5 = [
             },
             { 
                 answer: "Prospect Street",
-                points: 85,
+                points: 60,
                 accept: ["Prospect Street", "Prospect", "Prospect St"],
                 description: null,
             },
@@ -2086,9 +2087,9 @@ const QUESTIONS_WEEK_5 = [
             },
             {
                 answer: "New London, CT",
-                points: 60,
+                points: 100,
                 accept: ["New London"],
-                description: null,
+                description: "New London is (almost) halfway between Boston and NYC on Amtraks",
             },
             {
                 answer: "Wethersfield, CT",
